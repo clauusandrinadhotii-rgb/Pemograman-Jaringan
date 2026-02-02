@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login Monitor</title>
+    <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"></script>
+</head>
+<body>
+
+<h2>Login</h2>
+
+<input id="user" placeholder="Username"><br><br>
+<input id="pass" type="password" placeholder="Password"><br><br>
+<button onclick="login()">Login</button>
+
+<h3 id="status"></h3>
+<h2 id="cpu"></h2>
+
+<script>
+const socket = io();
+
+function login() {
+    fetch("/login", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            username: document.getElementById("user").value,
+            password: document.getElementById("pass").value
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "ok") {
+            document.getElementById("status").innerHTML = "Login Berhasil";
+        } else {
+            document.getElementById("status").innerHTML = "Login Gagal";
+        }
+    });
+}
+
+socket.on("update", function(data) {
+    document.getElementById("cpu").innerHTML =
+        "CPU Usage: " + data.cpu + "%";
+});
+</script>
+
+</body>
+</html>
